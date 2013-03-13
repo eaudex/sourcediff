@@ -1,0 +1,93 @@
+Joseph Ellis (ellisjoe@uchicago.edu)
+Created: January 2013
+Last Update: Feb 5, 2013
+Developed for CS152, University of Chicago, Adam Shaw
+
+
+1. Compiling:
+   $ make sourcediff
+
+   Make compiles everything necessary to run Sourcediff
+
+2. Usage:
+   $ ./sourcediff [OPTIONS] [PATH] [FILE-NAMES]
+
+   PATH: 
+   	 This is the path to the directory containing all of the repositories
+	 in which the files to be compared are located. Sourcediff will check
+	 every repo within this directory for the files specified by
+	 [FILE-NAMES] and print errors to stderr if no files are found
+	 or if only empty files are found in a repository.
+
+   FILE-NAMES: 
+   	 This is the name of all the files per repository that are to be
+         compared. If the files in each repository are contained within a
+	 subdirectory, prefix that subdirectory here. Input can include
+	 any standard BASH letter patterns. ie: *.[ch] will concatenate
+	 all .c and .h files in a given repo, save to a temporary file and 
+	 compare to all .c and .h files in every other repo. Temporary files 
+	 are removed before exiting. 
+
+	 WARNING: 
+	 Depending on the pattern used, it may be necessary to use the escape
+	 character '\' in the FILE-NAME input. This is so the shell doesn't 
+	 recognize the input as a pattern and try to give Sourcediff all in the
+	 files in the current directory that match as arguments. ie: \*.[ch]
+
+   OPTIONS:
+	 -a		Parses all characters in all files rather than removing
+	 		everything but letters and numbers
+
+         -h		Prints the help message and exits
+
+	 -l [num]	Changes the length of the substring (k-gram) to be
+	    		compared. Must be in [1-8] due to hash function.
+			Larger values will produce fewer false positives but
+			may also miss similarities picked up by smaller values.
+
+	 -m [num]	Select the mod value to use when selecting which hashes
+	 		to compare. 1 will compare all hashes while any other
+			number will compare hashes such that: hash % num == 0
+
+	 -t [num]	Select the threshold that the similarity percentage
+	    		of two repos must be greater in order to be output.
+			Default is 0 and will print all comparisons.
+
+	 -w 		Include whitespace in comparison analysis.
+	 		Default only includes letters and numbers.
+
+	 -s		Turns off sorting of hashes before comparison.
+	 		Used only to compare run times of each implementation.
+			(VERY SLOW)
+
+3. Output:
+   The output is split into three columns delimited by a space:
+   [percent-similar] [studentA] [studentB]
+   Before printing this, Sourcediff will output any files that it finds 
+   are either empty or nonexistant. These are printed to stderr so output 
+   redirection using '>' or '>>' will only send the comparison results.
+   
+4. Implementation:
+   The purpose of Sourcediff is to analyze text for similarities and provide
+   the user with a percentage of similarity between any two files. The 
+   algorithms used in the program originate from a paper that can be found at:
+
+   http://theory.stanford.edu/~aiken/moss/
+
+   After reading in all necessary files (which are concatenated into one large
+   file per repository to compare repo to repo), the text is parsed based upon
+   user preference (remove whitespace, etc.). The text is then broken up into
+   k-grams of desired user length and hashed to increase compare speed.
+   The hash values are then sorted per repo, again, to increase compare
+   speed. After all repos have been hashed and sorted they are then compared.
+   Each hash the repos have in common is counted and the ratio of common hashes
+   to number of hashes in the larger repo is then returned to the user. 
+
+Note: Differences in similarity percentage between sorted and unsorted hash
+      values has to do with the fact that the comparison of unsorted hashes
+      allows for a list of hash values with multiple occurrences of the same
+      hash to be counted as multiple similarites. Comparison of sorted hashes
+      allows us to only count the number of hashes exactly the same (including
+      multiple occurrences of the same hash which are each counted once). This
+      leads to the comparison of sorted hashes computing slightly lower 
+      similarity percentages but will yield more accurate results.

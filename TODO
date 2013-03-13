@@ -1,0 +1,17 @@
+updated: Feb 5, 2013
+
+Feb 5, 2013
+[DONE] implement getopt for better command line processing
+[DONE] add option to run analysis on all chars in a file
+
+Jan 31, 2013
+[DONE] allow multiple repo files to be compared. ie: file-name = *.[c,h]
+[DONE] remove need for repos.txt file by checking all folders in PATH
+[DONE] make PATH the first argument on the command line
+[DONE] abstract cnet name from sourcediff and replace with repo
+[DONE] add option to include whitespace in comparison analysis
+[DONE] command line flag for user defined file containing name IDs
+
+Jan 30, 2013:
+[DONE] command line flag for user defined path to folder containing files
+[DONE] sort hashes before comparison to improve compare speed
